@@ -161,6 +161,7 @@ void sendMenu()
 void sendMenuEmployee()
 {
   int option;
+  Employee *employeeList = NULL;
   sendTitle();
   sendCenteredMessage("Escolha uma opcao do menu de funcionarios: \n\n");
   sendCenteredMessage("1. Abertura de Conta\n");
@@ -183,12 +184,25 @@ void sendMenuEmployee()
     break;
 
   case 3:
+    loadEmployees(&employeeList, "employees.txt");
+    printEmployees(employeeList);
     break;
 
   case 4:
     break;
 
   case 5:
+
+    loadEmployees(&employeeList, "employees.txt");
+
+    Employee *newEmployee = getEmployeeDataFromUser(employeeList);
+    addEmployee(&employeeList, newEmployee);
+
+    saveEmployees(newEmployee, "employees.txt");
+
+    sendTitle();
+    sendCenteredMessage("O novo funcionario foi adicionado com sucesso!\n");
+    system("cls");
     break;
 
   case 6:
@@ -262,4 +276,246 @@ int validateAdminPass(char *password)
   }
 
   return 0;
+}
+
+Employee *createEmployee(char *name, char *cpf, int employeeCode, char *role, Date birth, char *phoneNumber, char *password, Address address)
+{
+  Employee *newEmployee = (Employee *)malloc(sizeof(Employee));
+  strcpy(newEmployee->name, name);
+  strcpy(newEmployee->cpf, cpf);
+  newEmployee->employeeCode = employeeCode;
+  strcpy(newEmployee->role, role);
+  newEmployee->birth = birth;
+  strcpy(newEmployee->phoneNumber, phoneNumber);
+  strcpy(newEmployee->password, password);
+  newEmployee->address = address;
+  newEmployee->deleted = 0;
+  newEmployee->next = NULL;
+  return newEmployee;
+}
+
+void addEmployee(Employee **head, Employee *newEmployee)
+{
+  if (*head == NULL)
+  {
+    *head = newEmployee;
+  }
+  else
+  {
+    Employee *temp = *head;
+    while (temp->next != NULL)
+    {
+      temp = temp->next;
+    }
+    temp->next = newEmployee;
+  }
+}
+
+void loadEmployees(Employee **head, const char *filename)
+{
+  FILE *file = fopen(filename, "r+");
+  if (file == NULL)
+  {
+    return;
+  }
+  Employee tempEmployee;
+  while (fread(&tempEmployee, sizeof(Employee), 1, file))
+  {
+    if (tempEmployee.deleted == 0)
+    {
+      Employee *newEmployee = createEmployee(
+          tempEmployee.name, tempEmployee.cpf, tempEmployee.employeeCode,
+          tempEmployee.role, tempEmployee.birth, tempEmployee.phoneNumber,
+          tempEmployee.password, tempEmployee.address);
+      addEmployee(head, newEmployee);
+    }
+  }
+  fclose(file);
+}
+
+void saveEmployees(Employee *head, const char *filename)
+{
+  FILE *file = fopen(filename, "a+");
+  if (file == NULL)
+  {
+    sendTitle();
+    sendCenteredMessage("Erro ao tentar ler a base de dados de funcionarios.\n");
+    return;
+  }
+  Employee *temp = head;
+  while (temp != NULL)
+  {
+    fwrite(temp, sizeof(Employee), 1, file);
+    temp = temp->next;
+  }
+  fclose(file);
+}
+
+void printEmployees(Employee *head)
+{
+  Employee *temp = head;
+  while (temp != NULL)
+  {
+    sendTitle();
+    sendCenteredMessage("Nome: %s\n", temp->name);
+    sendCenteredMessage("CPF: %s\n", temp->cpf);
+    sendCenteredMessage("Codigo: %d\n", temp->employeeCode);
+    sendCenteredMessage("Cargo: %s\n", temp->role);
+    sendCenteredMessage("Data de nascimento: %02d/%02d/%04d\n", temp->birth.day, temp->birth.month, temp->birth.year);
+    sendCenteredMessage("Numero de telefone: %s\n", temp->phoneNumber);
+    sendCenteredMessage("Endereco: %s, %s, %s, %s, %s\n", temp->address.address, temp->address.cep, temp->address.city, temp->address.state, temp->address.country);
+
+    temp = temp->next;
+
+    if (temp != NULL)
+    {
+      sendCenteredMessage("\n");
+      sendCenteredMessage("Pressione qualquer tecla para ver o proximo funcionario...\n\n");
+      getch();
+      system("cls");
+    }
+  }
+
+  sendCenteredMessage("\n");
+  sendCenteredMessage("Todos os funcionarios foram exibidos.\n");
+  sendCenteredMessage("Pressione qualquer tecla para voltar ao menu...\n\n");
+  getch();
+  system("cls");
+  sendMenuEmployee();
+}
+
+void deleteEmployee(Employee *head, int employeeCode)
+{
+  Employee *temp = head;
+  while (temp != NULL)
+  {
+    if (temp->employeeCode == employeeCode)
+    {
+      temp->deleted = 1;
+      return;
+    }
+    temp = temp->next;
+  }
+}
+
+void modifyEmployee(Employee *head, int employeeCode)
+{
+  Employee *temp = head;
+  while (temp != NULL)
+  {
+    if (temp->employeeCode == employeeCode && temp->deleted == 0)
+    {
+      sendCenteredMessage("Alterando dados do funcionario %s (Codigo: %d)\n", temp->name, temp->employeeCode);
+      sendCenteredMessage("Digite o novo nome: ");
+      scanf("%s", temp->name);
+      sendCenteredMessage("Digite o novo CPF: ");
+      scanf("%s", temp->cpf);
+      sendCenteredMessage("Digite o novo numero de telefone: ");
+      scanf("%s", temp->phoneNumber);
+      return;
+    }
+    temp = temp->next;
+  }
+}
+
+int employeeCodeExists(Employee *head, int employeeCode)
+{
+  Employee *temp = head;
+  while (temp != NULL)
+  {
+    if (temp->employeeCode == employeeCode && temp->deleted == 0)
+    {
+      return 1;
+    }
+    temp = temp->next;
+  }
+  return 0;
+}
+
+Employee *getEmployeeDataFromUser(Employee *employeeList)
+{
+  char name[25], cpf[14], role[25], phoneNumber[15], password[16], addressLine[45], cep[10], city[20], country[20], state[3];
+  int employeeCode, day, month, year;
+
+  sendTitle();
+  sendCenteredMessage("Digite o codigo que sera atribuido ao funcionario: ");
+  scanf("%d", &employeeCode);
+  system("cls");
+
+  if (employeeCodeExists(employeeList, employeeCode) == 1)
+  {
+    sendTitle();
+    sendCenteredMessage("O codigo %d ja foi atribuido a outro funcionario.\n", employeeCode);
+    sendCenteredMessage("Pressione qualquer tecla para retornar ao menu e tentar novamente...\n");
+    getch();
+    system("cls");
+    sendMenuEmployee();
+    return NULL;
+  }
+
+  sendTitle();
+  sendCenteredMessage("Digite o nome completo: ");
+  scanf("%s", name);
+  system("cls");
+
+  sendTitle();
+  sendCenteredMessage("Digite o CPF: ");
+  scanf("%s", cpf);
+  system("cls");
+
+  sendTitle();
+  sendCenteredMessage("Digite o cargo: ");
+  scanf("%s", role);
+  system("cls");
+
+  sendTitle();
+  sendCenteredMessage("Digite a data de nascimento (dia mes ano): ");
+  scanf("%d %d %d", &day, &month, &year);
+  system("cls");
+
+  sendTitle();
+  sendCenteredMessage("Digite o numero de telefone: ");
+  scanf("%s", phoneNumber);
+  system("cls");
+
+  sendTitle();
+  sendCenteredMessage("Digite a senha de acesso: ");
+  scanf("%s", password);
+  system("cls");
+
+  sendTitle();
+  sendCenteredMessage("Digite o endereco: ");
+  scanf(" %[^\n]", addressLine);
+  system("cls");
+
+  sendTitle();
+  sendCenteredMessage("Digite o CEP: ");
+  scanf("%s", cep);
+  system("cls");
+
+  sendTitle();
+  sendCenteredMessage("Digite a cidade de residencia do funcionario: ");
+  scanf(" %[^\n]", city);
+  system("cls");
+
+  sendTitle();
+  sendCenteredMessage("Digite o pais de residencia do funcionario: ");
+  scanf(" %[^\n]", country);
+  system("cls");
+
+  sendTitle();
+  sendCenteredMessage("Digite o estado de residencia do funcionario (2 caracteres somente): ");
+  scanf("%s", state);
+  system("cls");
+
+  Date birth = {day, month, year};
+
+  Address address;
+  strcpy(address.address, addressLine);
+  strcpy(address.cep, cep);
+  strcpy(address.city, city);
+  strcpy(address.country, country);
+  strcpy(address.state, state);
+
+  return createEmployee(name, cpf, employeeCode, role, birth, phoneNumber, password, address);
 }

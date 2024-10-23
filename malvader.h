@@ -28,10 +28,10 @@ typedef struct
   char cep[10];
   char city[20];
   char country[20];
-  char state[2];
+  char state[3];
 } Address;
 
-typedef struct
+typedef struct Employee
 {
   char name[25];
   char cpf[14];
@@ -42,8 +42,18 @@ typedef struct
   char password[16];
   Address address;
   char deleted;
-
+  struct Employee *next;
 } Employee;
+
+Employee *createEmployee(char *name, char *cpf, int employeeCode, char *role, Date birth, char *phoneNumber, char *password, Address address);
+void addEmployee(Employee **head, Employee *newEmployee);
+void loadEmployees(Employee **head, const char *filename);
+void saveEmployees(Employee *head, const char *filename);
+void printEmployees(Employee *head);
+void deleteEmployee(Employee *head, int employeeCode);
+void modifyEmployee(Employee *head, int employeeCode);
+int employeeCodeExists(Employee *head, int employeeCode);
+Employee *getEmployeeDataFromUser();
 
 void sendCenteredMessage(const char *format, ...);
 void sendTitle();
