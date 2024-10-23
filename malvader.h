@@ -46,20 +46,20 @@ typedef struct Employee
 } Employee;
 
 Employee *createEmployee(char *name, char *cpf, int employeeCode, char *role, Date birth, char *phoneNumber, char *password, Address address);
+Employee *getEmployeeDataFromUser();
+int employeeCodeExists(Employee *head, int employeeCode);
 void addEmployee(Employee **head, Employee *newEmployee);
 void loadEmployees(Employee **head, const char *filename);
 void saveEmployees(Employee *head, const char *filename);
 void printEmployees(Employee *head);
 void deleteEmployee(Employee *head, int employeeCode);
 void modifyEmployee(Employee *head, int employeeCode);
-int employeeCodeExists(Employee *head, int employeeCode);
-Employee *getEmployeeDataFromUser();
-
 void sendCenteredMessage(const char *format, ...);
 void sendTitle();
 void sendMenu();
 void sendMenuEmployee();
 void sendMenuCustomer();
+
 int validateAdminPass(char *password);
 
 #endif
