@@ -1,0 +1,13 @@
+# Pastas padrões do VSCode
+.vscode
+.vscode/*
+
+# Pastas de saída da extensão compile run do VSCode
+output/*
+output/
+
+# Arquivo executável do banco após compilação
+banco.exe 
+
+# Arquivo contendo o código da versão anterior do Banco Malvader
+oldBank.c
