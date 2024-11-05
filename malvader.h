@@ -1,65 +1,67 @@
 #ifndef MALVADER_H
 #define MALVADER_H
 
-#define MAX_MENU_NAME 25
-#define DEFAULT_PASS_SIZE 16
-
 #include <stdio.h>
 #include <stdlib.h>
+#include <locale.h>
 #include <string.h>
-#include <time.h>
-#include <conio.h>
-#include <windows.h>
-#include <unistd.h>
 
-#define ROWS 7
-#define CHARACTERS 91
+#define DEFAULT_PASS_SIZE 16
 
 typedef struct
 {
-  int day;
-  int month;
-  int year;
-} Date;
+  int dia;
+  int mes;
+  int ano;
+} Data;
 
 typedef struct
 {
-  char address[45];
+  char endereco[45];
   char cep[10];
-  char city[20];
-  char country[20];
-  char state[3];
-} Address;
+  char bairro[20];
+  char cidade[20];
+  char estado[2];
+} Endereco;
 
-typedef struct Employee
+typedef struct
 {
-  char name[25];
+  char nome[25];
+  int agencia;
+  int numDaConta;
+  float limiteDaConta;
+  char cpf[15];
+  Data nascimento;
+  Data vencimento;
+  char telefone[14];
+  Endereco endereco;
+  char senha[DEFAULT_PASS_SIZE];
+  float saldo;
+  char tipoConta[4];
+  char excluido;
+} Cliente;
+
+typedef struct
+{
+  char nomeFuncionario[25];
   char cpf[14];
-  int employeeCode;
-  char role[25];
-  Date birth;
-  char phoneNumber[15];
-  char password[16];
-  Address address;
-  char deleted;
-  struct Employee *next;
-} Employee;
+  int codigoFuncionario;
+  char cargo[25];
+  Data nascimento;
+  char telefoneContato[15];
+  char senhaFuncionario[DEFAULT_PASS_SIZE];
+  Endereco endereco;
+  char excluido;
+} Funcionario;
 
-Employee *createEmployee(char *name, char *cpf, int employeeCode, char *role, Date birth, char *phoneNumber, char *password, Address address);
-Employee *getEmployeeDataFromUser();
-int employeeCodeExists(Employee *head, int employeeCode);
-void addEmployee(Employee **head, Employee *newEmployee);
-void loadEmployees(Employee **head, const char *filename);
-void saveEmployees(Employee *head, const char *filename);
-void printEmployees(Employee *head);
-void deleteEmployee(Employee *head, int employeeCode);
-void modifyEmployee(Employee *head, int employeeCode);
-void sendCenteredMessage(const char *format, ...);
-void sendTitle();
-void sendMenu();
-void sendMenuEmployee();
-void sendMenuCustomer();
+typedef struct
+{
+  char nome[25];
+  char tipo[15];
+  float valor;
+} Transacao;
 
-int validateAdminPass(char *password);
+void enviarTitulo();
+void enviarMenuPrincipal();
 
 #endif

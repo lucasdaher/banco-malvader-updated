@@ -5,8 +5,6 @@
 # Pastas de saída da extensão compile run do VSCode
 output/*
 output/
-employees.txt
-customers.txt
 
 # Arquivo executável do banco após compilação
 banco.exe 

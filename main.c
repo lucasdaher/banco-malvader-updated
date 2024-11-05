@@ -2,7 +2,7 @@
 
 int main()
 {
-  char menuType[MAX_MENU_NAME] = "principal";
-  sendMenu(menuType);
+  setlocale(LC_ALL, "");
+  enviarMenuPrincipal();
   return 0;
 }
