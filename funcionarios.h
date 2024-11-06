@@ -3,7 +3,7 @@
 
 #include "malvader.h"
 
-void menuFuncionario();
+void enviarMenuFuncionario();
 int consultarFuncionario(FILE *file, Funcionario funcionario);
 int inserirFuncionario(FILE *file, Funcionario funcionario);
 int alterarFuncionario(FILE *file, Funcionario funcionario_antigo, Funcionario funcionario_novo);

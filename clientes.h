@@ -3,7 +3,7 @@
 
 #include "malvader.h"
 
-void menuCliente();
+void enviarMenuCliente(FILE *file, Cliente cliente);
 int consultarCliente(FILE *file, Cliente cliente);
 int inserirCliente(FILE *file, Cliente cliente);
 int alterarCliente(FILE *file, Cliente cliente_antigo, Cliente cliente_novo);

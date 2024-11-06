@@ -11,3 +11,12 @@ banco.exe
 
 # Arquivo contendo o código da versão anterior do Banco Malvader
 oldBank.c
+
+# Arquivo temporário do Excel
+~$extrato.xlsx
+
+# Arquivos de saída
+clientes.txt
+extrato.txt
+movimentos/*
+funcionarios.txt

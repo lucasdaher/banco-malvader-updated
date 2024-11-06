@@ -1,10 +1,14 @@
 #ifndef MALVADER_H
 #define MALVADER_H
 
-#include <stdio.h>
+#include <windows.h>
 #include <stdlib.h>
-#include <locale.h>
+#include <stdio.h>
+#include <conio.h>
 #include <string.h>
+#include <locale.h>
+#include <unistd.h>
+#include <time.h>
 
 #define DEFAULT_PASS_SIZE 16
 
@@ -63,5 +67,8 @@ typedef struct
 
 void enviarTitulo();
 void enviarMenuPrincipal();
+int validarSenhaAdmin(char *senhaDigitada);
+void enviarMenuAberturaConta();
+void formatarTipoConta(Cliente cliente);
 
 #endif
