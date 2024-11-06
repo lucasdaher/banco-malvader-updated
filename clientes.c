@@ -85,25 +85,18 @@ void enviarMenuCliente(FILE *file, Cliente cliente)
   } while (opcao <= 0 || opcao > 6);
 }
 
-int consultarCliente(FILE *file, Cliente cliente)
+int consultarClientePorCodigo(FILE *file, int numeroDaConta)
 {
   Cliente cliente_lido;
+  int posicao = 0;
 
-  int posicao;
-
-  if (file != NULL)
+  fseek(file, 0L, SEEK_SET);
+  while (fread(&cliente_lido, sizeof(Cliente), 1, file))
   {
-    fseek(file, 0L, SEEK_SET);
-    posicao = 0;
+    if (cliente_lido.numDaConta == numeroDaConta && cliente_lido.excluido == 0)
+      return posicao;
 
-    while (fread(&cliente_lido, sizeof(cliente_lido), 1, file))
-    {
-      if (strcmpi(cliente_lido.nome, cliente.nome) == 0 &&
-          (cliente_lido.excluido == 0))
-
-        return posicao;
-      posicao++;
-    };
+    posicao++;
   }
   return -1;
 }
@@ -118,7 +111,7 @@ int inserirCliente(FILE *file, Cliente cliente)
   {
     posicao = 0;
 
-    if (consultarCliente(file, cliente))
+    if (consultarClientePorCodigo(file, cliente.numDaConta))
     {
       fseek(file, 0L, SEEK_SET);
 
@@ -156,7 +149,7 @@ int alterarCliente(FILE *file, Cliente cliente_antigo, Cliente cliente_novo)
 
   if (file != NULL)
   {
-    if ((posicao = consultarCliente(file, cliente_antigo)) != -1)
+    if ((posicao = consultarClientePorCodigo(file, cliente_antigo.numDaConta)) != -1)
     {
       fseek(file, posicao * sizeof(Cliente), SEEK_SET);
 
@@ -210,7 +203,7 @@ int excluirCliente(FILE *file, Cliente cliente)
 
   if (file != NULL)
   {
-    if ((posicao = consultarCliente(file, cliente)) != -1)
+    if ((posicao = consultarClientePorCodigo(file, cliente.numDaConta)) != -1)
     {
       fseek(file, posicao * sizeof(cliente), SEEK_SET);
 
@@ -244,7 +237,7 @@ void validarSenhaCliente(FILE *file, Cliente cliente)
   {
     acesso = 0;
 
-    if ((posicao = consultarCliente(file, cliente)) != -1)
+    if ((posicao = consultarClientePorCodigo(file, cliente.numDaConta)) != -1)
     {
       fseek(file, posicao * sizeof(cliente), SEEK_SET);
 
@@ -278,17 +271,11 @@ void validarSenhaCliente(FILE *file, Cliente cliente)
 
 void saldo(Cliente cliente)
 {
-  FILE *file = fopen("clientes.txt", "r+");
-
-  if (file == NULL)
-  {
-    printf("O arquivo de clientes nao foi encontrado. Tentando gerar um novo...\n");
-    file = fopen("clientes.txt", "w+");
-  }
+  FILE *file = verificarOuCriarArquivo("clientes.txt");
 
   int posicao;
 
-  if ((posicao = consultarCliente(file, cliente)) != -1)
+  if ((posicao = consultarClientePorCodigo(file, cliente.numDaConta)) != -1)
   {
     fseek(file, posicao * sizeof(cliente), SEEK_SET);
     fread(&cliente, sizeof(cliente), 1, file);
@@ -305,13 +292,7 @@ void saldo(Cliente cliente)
 
 void depositar(Cliente cliente)
 {
-  FILE *file = fopen("clientes.txt", "r+");
-
-  if (file == NULL)
-  {
-    printf("O arquivo de clientes nao foi encontrado, tentando gerar um novo...\n");
-    file = fopen("clientes.txt", "w+");
-  }
+  FILE *file = verificarOuCriarArquivo("clientes.txt");
 
   float valor;
 
@@ -324,7 +305,7 @@ void depositar(Cliente cliente)
   scanf("%f", &valor);
   system("cls");
 
-  if ((posicao = consultarCliente(file, cliente)) == -1)
+  if ((posicao = consultarClientePorCodigo(file, cliente.numDaConta)) == -1)
   {
     enviarTitulo();
     printf("A sua conta esta com problema, tente novamente mais tarde.\n");
@@ -368,13 +349,7 @@ void depositar(Cliente cliente)
 
 void sacar(Cliente cliente)
 {
-  FILE *file = fopen("clientes.txt", "r+");
-
-  if (file == NULL)
-  {
-    printf("O arquivo de clientes nao foi encontrado. Tentando gerar um novo...\n");
-    file = fopen("clientes.txt", "w+");
-  }
+  FILE *file = verificarOuCriarArquivo("clientes.txt");
 
   float valor;
 
@@ -387,7 +362,7 @@ void sacar(Cliente cliente)
   scanf("%f", &valor);
   system("cls");
 
-  if ((posicao = consultarCliente(file, cliente)) == -1)
+  if ((posicao = consultarClientePorCodigo(file, cliente.numDaConta)) == -1)
   {
     enviarTitulo();
     printf("A sua conta esta com problema, tente novamente mais tarde.\n");

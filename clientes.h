@@ -4,7 +4,7 @@
 #include "malvader.h"
 
 void enviarMenuCliente(FILE *file, Cliente cliente);
-int consultarCliente(FILE *file, Cliente cliente);
+int consultarClientePorCodigo(FILE *file, int numeroDaConta);
 int inserirCliente(FILE *file, Cliente cliente);
 int alterarCliente(FILE *file, Cliente cliente_antigo, Cliente cliente_novo);
 int excluirCliente(FILE *file, Cliente cliente);

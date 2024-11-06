@@ -67,8 +67,10 @@ typedef struct
 
 void enviarTitulo();
 void enviarMenuPrincipal();
-int validarSenhaAdmin(char *senhaDigitada);
 void enviarMenuAberturaConta();
 void formatarTipoConta(Cliente cliente);
+int validarSenhaAdmin(char *senhaDigitada);
+void obterEntrada(char *mensagem, char *buffer, int buffer_size);
+FILE *verificarOuCriarArquivo(const char *filename);
 
 #endif
